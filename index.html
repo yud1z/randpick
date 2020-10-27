@@ -1,0 +1,172 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <title>Random Picker</title>
+
+    <!-- Slim CSS -->
+    <link rel="stylesheet" href="slim/css/slim.css">
+    <link rel="stylesheet" href="slim/lib/Ionicons/css/ionicons.css">
+    <script type="text/javascript" charset="utf-8" src="https://code.jquery.com/jquery-3.5.1.min.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"> </script>
+    <script src="slim/lib/popper.js/js/popper.js"></script>
+    <script src="slim/lib/bootstrap/js/bootstrap.js"></script>
+    <script src="slim/lib/parsleyjs/js/parsley.js"></script>
+    <script src="slim/lib/jquery.cookie/js/jquery.cookie.js"></script>
+
+    <script>
+        if (!(window.indexedDB || window.window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB))
+            // Pull down the polyfill if needed (Safari + older opera browser)
+            document.write('<script src="https://rawgit.com/axemclion/IndexedDBShim/master/dist/indexeddbshim.js">\x3C/script>');
+    </script>
+
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script type="text/javascript" charset="utf-8" src="app.js"> </script>
+
+<!-- Global site tag (gtag.js) - Google Analytics 
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M4C3N9S4WK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M4C3N9S4WK');
+</script>
+    -->
+
+<style type="text/css" media="screen">
+  .breadcrumb-item + .breadcrumb-item::before {
+    display: inline-block;
+    padding-right: 0.5rem;
+    color: #6c757d;
+    content: " ";
+}
+</style>
+  </head>
+
+  <body>
+
+
+    <div class="slim-header">
+      <div class="container">
+        <div class="slim-header-left">
+          <h2 class="slim-logo"><a href="index.html">Random Picker<span>.</span></a></h2>
+
+        </div><!-- slim-header-left -->
+      </div><!-- container -->
+    </div><!-- slim-header -->
+
+    <div class="slim-mainpanel">
+    <div class="container">
+
+<div class="slim-pageheader">
+          <ol class="breadcrumb slim-breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">My Projects</li>
+          </ol>
+          <h6 class="slim-pagetitle">Project List</h6>
+        </div>
+
+
+<div class="manager-wrapper">
+          <div class="manager-right">
+            <div id="" style="">
+              
+          <ol class="breadcrumb slim-breadcrumb" style="float:right;font-size:12px;">
+            <li class="breadcrumb-item"><a href="#">search</a></li>
+            <li class="breadcrumb-item"><a href="#">add data</a></li>
+            <li class="breadcrumb-item"><a href="#">import from csv</a></li>
+            <li class="breadcrumb-item"><a href="#">delete project</a></li>
+            <li class="breadcrumb-item"><a href="#">flush(Delete all) data</a></li>
+            <li class="breadcrumb-item"><a href="#">delete result</a></li>
+            <li class="breadcrumb-item"><a href="#">config</a></li>
+            <li class="breadcrumb-item"><a href="#" style="font-weight:bold;">Show Screen</a></li>
+          </ol>
+            </div>
+            <label class="section-label">Today</label>
+            <div class="file-group">
+              <div class="file-item">
+                <div class="row no-gutters wd-100p">
+                  <div class="col-9 col-sm-5 d-flex align-items-center">
+                    <i class="fa fa-file-image-o"></i>
+                    <a href="">IMG_12292017.jpg</a>
+                  </div><!-- col-6 -->
+                  <div class="col-3 col-sm-2 tx-right tx-sm-left">123kb</div>
+                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0">20 minutes ago</div>
+                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>
+                </div><!-- row -->
+              </div><!-- file-item -->
+              <div class="file-item">
+                <div class="row no-gutters wd-100p">
+                  <div class="col-9 col-sm-5 d-flex align-items-center">
+                    <i class="fa fa-file-image-o"></i>
+                    <a href="">IMG_12292016.jpg</a>
+                  </div><!-- col-6 -->
+                  <div class="col-3 col-sm-2 tx-right tx-sm-left">204kb</div>
+                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0">1 hour ago</div>
+                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>
+                </div><!-- row -->
+              </div><!-- file-item -->
+              <div class="file-item">
+                <div class="row no-gutters wd-100p">
+                  <div class="col-9 col-sm-5 d-flex align-items-center">
+                    <i class="fa fa-file-pdf-o"></i>
+                    <a href="">Getting_Started.pdf</a>
+                  </div><!-- col-6 -->
+                  <div class="col-3 col-sm-2 tx-right tx-sm-left">31kb</div>
+                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0">2 hours ago</div>
+                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>
+                </div><!-- row -->
+              </div><!-- file-item -->
+            </div><!-- file-group -->
+
+
+            <div class="load-more-wrapper mg-t-25">
+              <a href="">Load more</a>
+            </div><!-- load-more-wrapper -->
+          </div><!-- manager-right -->
+          <div class="manager-left">
+            <a class="btn btn-contact-new" onclick="new_project(this)" style="color:white;" >New Project</a>
+            <nav class="nav" id="project_list">
+            </nav>
+
+          </div><!-- manager-left -->
+        </div>
+
+
+
+    </div>
+    </div>
+
+
+        <!-- SMALL MODAL -->
+    <div id="new_project_modal" class="modal fade">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content bd-0 tx-14">
+          <div class="modal-header pd-x-20">
+            <h6 class="tx-14 mg-b-0 tx-uppercase tx-inverse tx-bold">Add Project</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body pd-20">
+            <p class="mg-b-5">
+            <form  data-parsley-validate id="form_project_name">
+            <input class="form-control" placeholder="Project Name" type="text" id="project_name" required>
+             </form>
+            </p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-primary" onclick="save_project(this)">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div><!-- modal-dialog -->
+    </div><!-- modal -->
+
+
+  </body>
+
+
+</html>
