@@ -22,6 +22,7 @@
     </script>
 
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script src="https://timeago.yarp.com/jquery.timeago.js"></script>
     <script type="text/javascript" charset="utf-8" src="app.js"> </script>
 
 <!-- Global site tag (gtag.js) - Google Analytics 
@@ -75,7 +76,7 @@
               
           <ol class="breadcrumb slim-breadcrumb" style="float:right;font-size:12px;">
             <li class="breadcrumb-item"><a href="#">search</a></li>
-            <li class="breadcrumb-item"><a href="#">add data</a></li>
+            <li class="breadcrumb-item"><a href="javascript:void(0);" onclick="new_data(this)" >add data</a></li>
             <li class="breadcrumb-item"><a href="#">import from csv</a></li>
             <li class="breadcrumb-item"><a href="#">delete project</a></li>
             <li class="breadcrumb-item"><a href="#">flush(Delete all) data</a></li>
@@ -84,45 +85,12 @@
             <li class="breadcrumb-item"><a href="#" style="font-weight:bold;">Show Screen</a></li>
           </ol>
             </div>
-            <label class="section-label">Today</label>
-            <div class="file-group">
-              <div class="file-item">
-                <div class="row no-gutters wd-100p">
-                  <div class="col-9 col-sm-5 d-flex align-items-center">
-                    <i class="fa fa-file-image-o"></i>
-                    <a href="">IMG_12292017.jpg</a>
-                  </div><!-- col-6 -->
-                  <div class="col-3 col-sm-2 tx-right tx-sm-left">123kb</div>
-                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0">20 minutes ago</div>
-                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>
-                </div><!-- row -->
-              </div><!-- file-item -->
-              <div class="file-item">
-                <div class="row no-gutters wd-100p">
-                  <div class="col-9 col-sm-5 d-flex align-items-center">
-                    <i class="fa fa-file-image-o"></i>
-                    <a href="">IMG_12292016.jpg</a>
-                  </div><!-- col-6 -->
-                  <div class="col-3 col-sm-2 tx-right tx-sm-left">204kb</div>
-                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0">1 hour ago</div>
-                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>
-                </div><!-- row -->
-              </div><!-- file-item -->
-              <div class="file-item">
-                <div class="row no-gutters wd-100p">
-                  <div class="col-9 col-sm-5 d-flex align-items-center">
-                    <i class="fa fa-file-pdf-o"></i>
-                    <a href="">Getting_Started.pdf</a>
-                  </div><!-- col-6 -->
-                  <div class="col-3 col-sm-2 tx-right tx-sm-left">31kb</div>
-                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0">2 hours ago</div>
-                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>
-                </div><!-- row -->
-              </div><!-- file-item -->
+            <label class="section-label">Data of </label>
+            <div class="file-group" id="data_list">
             </div><!-- file-group -->
 
 
-            <div class="load-more-wrapper mg-t-25">
+            <div class="load-more-wrapper mg-t-25" style="display:none">
               <a href="">Load more</a>
             </div><!-- load-more-wrapper -->
           </div><!-- manager-right -->
@@ -153,7 +121,7 @@
           <div class="modal-body pd-20">
             <p class="mg-b-5">
             <form  data-parsley-validate id="form_project_name">
-            <input class="form-control" placeholder="Project Name" type="text" id="project_name" required>
+            <input class="form-control" placeholder="Project Name" type="text" id="project_name" onkeyup="save_project_by_enter(this,event)" required>
              </form>
             </p>
           </div>
@@ -165,6 +133,31 @@
       </div><!-- modal-dialog -->
     </div><!-- modal -->
 
+    <div id="new_data_modal" class="modal fade">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content bd-0 tx-14">
+          <div class="modal-header pd-x-20">
+            <h6 class="tx-14 mg-b-0 tx-uppercase tx-inverse tx-bold">Add data</h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body pd-20">
+            <p class="mg-b-5">
+            <form  data-parsley-validate id="form_data_name" class="form-layout">
+            <input class="form-control" placeholder="Data Alias" type="text" id="data_alias">
+            <br>
+            <input class="form-control" placeholder="Data Value" type="text" id="data_name" onkeyup="save_data_by_enter(this,event)" required>
+             </form>
+            </p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-primary" onclick="save_data(this)">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div><!-- modal-dialog -->
+    </div><!-- modal -->
 
   </body>
 

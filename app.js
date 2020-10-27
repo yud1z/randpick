@@ -2,6 +2,9 @@ var db = new Dexie("RandPick");
 db.version(1).stores({
 projects: "++id,name"
 });
+db.version(4).stores({
+data: "++id,project_id,alias,value,date"
+});
 db.open();
 
 
@@ -26,7 +29,7 @@ function getProjects(){
   db.projects.orderBy('id').desc().each(function (project) {
       if (io == 0) {
           $('#project_list').append(''+
-            '  <a href="#project_'+ project.id +'" class="nav-link active" onclick="nav_click(this)"> '+
+            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'" class="nav-link active" onclick="nav_click(this)"> '+
             '   <span>'+ project.name +'</span> '+
             '    <span>0</span> '+
             '  </a> '+
@@ -34,7 +37,7 @@ function getProjects(){
         }
         else{
           $('#project_list').append(''+
-            '  <a href="#project_'+ project.id +'" class="nav-link" onclick="nav_click(this)"> '+
+            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'"  class="nav-link" onclick="nav_click(this)"> '+
             '   <span>'+ project.name +'</span> '+
             '    <span>0</span> '+
             '  </a> '+
@@ -46,7 +49,31 @@ function getProjects(){
 
 }
 
+
+function getData(){
+  $('#data_list').html('');
+  project_id = $('a.nav-link.active').attr('data-id');
+  console.log(project_id);
+  db.data.where('project_id').equals(project_id).reverse().each(function (data) {
+
+  $('#data_list').append('' +
+'              <div class="file-item">'+
+'                <div class="row no-gutters wd-100p">'+
+'                  <div class="col-9 col-sm-5 d-flex align-items-center">'+
+data.alias +
+'                  </div><!-- col-6 -->'+
+'                  <div class="col-3 col-sm-2 tx-right tx-sm-left">'+ data.value +'</div>'+
+'                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0" title="'+ data.date +'">'+ jQuery.timeago(data.date) +'</div>'+
+'                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>'+
+'                </div><!-- row -->'+
+'              </div><!-- file-item -->'+
+          '');
+      });
+
+}
+
 getProjects();
+getData();
 
 function nav_click(el){
     $('.nav-link').removeClass("active");
@@ -57,7 +84,27 @@ function new_project(el){
   $('#new_project_modal').modal('show');
   }
 
+
+function new_data(el){
+  $('#new_data_modal').modal('show');
+  }
+
 $('#form_project_name').parsley();
+
+
+function save_project_by_enter(el,e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        // Do something
+        save_project(el);
+    }
+}
+
+function save_data_by_enter(el,e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        // Do something
+        save_data(el);
+    }
+}
 
 function save_project (el) {
     project_name = $('#project_name').val();  
@@ -67,6 +114,31 @@ function save_project (el) {
           getProjects();
           $('#project_name').val('');
           $('#new_project_modal').modal('hide');
+          // Log data from DB:
+          }).catch(function (e) {
+            console.log(e, "error");
+            });
+    }
+    else  {
+        return false;
+    }
+}
+
+
+function save_data(el) {
+    data_name = $('#data_name').val();  
+    data_alias = $('#data_alias').val();  
+    if (data_name.trim() != '') {
+      return db.transaction("rw", db.data, function () {
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        project_id = parseInt($('a.nav-link.active').attr('data-id'));
+          db.data.add({ alias: data_alias, value: data_name, date: date + ' ' + time, project_id: project_id});
+          getData();
+          $('#data_alias').val('');
+          $('#data_name').val('');
+          $('#new_data_modal').modal('hide');
           // Log data from DB:
           }).catch(function (e) {
             console.log(e, "error");
