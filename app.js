@@ -101,7 +101,46 @@ function getData(){
 
 function edit_data (el) {
 
+  $('#update_data_modal').modal('show');
+  data_id = parseInt($(el).attr('data-id'));
 
+  db.transaction('rw',  db.data, function* () {
+
+      db.data.where('id')
+      .equals(data_id)
+      .each(function (data) {
+
+          $('#update_data_alias').val(data.alias);
+          $('#update_data_name').val(data.value);
+          $('#submit_update_changes').attr('data-id', data.id);
+          $('#update_data_name').attr('data-id', data.id);
+
+          });
+
+      }).catch (e => {
+        console.error (e);
+        });
+
+}
+
+function update_data (el) {
+  data_id     = parseInt($(el).attr('data-id'));
+  data_alias  = $('#update_data_alias').val();
+  data_name   = $('#update_data_name').val();
+  db.transaction('rw',  db.data, function* () {
+      db.data.where('id').equals(data_id).modify({alias: data_alias, value: data_name})
+      getData();
+      $('#update_data_modal').modal('hide');
+      }).catch (e => {
+        console.error (e);
+        });
+}
+
+function update_data_by_enter (el,e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+    // Do something
+    update_data(el);
+  }
 }
 
 function delete_data (el) {
