@@ -76,7 +76,7 @@ function getData(){
   db.data.where('project_id').equals(project_id).limit(10).reverse().each(function (data) {
 
   $('#data_list').append('' +
-'              <div class="file-item">'+
+'              <div class="file-item" data-id='+ data.id +'>'+
 '                <div class="row no-gutters wd-100p">'+
 '                  <div class="col-9 col-sm-5 d-flex align-items-center">'+
 data.alias +
@@ -91,7 +91,7 @@ data.alias +
 
 }
 
-function getDatabyPage(page_id = 0){
+function getDatabyPage(){
     //do something special
   $('#load_more').hide();        
   project_id = parseInt($('a.nav-link.active').attr('data-id'));
@@ -100,10 +100,32 @@ function getDatabyPage(page_id = 0){
         $('#load_more').show();        
       }
       });
-  db.data.where('project_id').equals(project_id).limit(10).reverse().each(function (data) {
+  last_data_id = parseInt($('.file-item').last().attr('data-id'));
+
+
+  db.data.where('project_id')
+      .equals(project_id)
+      .and(function (data) { return data.id < last_data_id})
+      .limit(10)
+      .reverse()
+      .count(function (data) {
+        
+        if (data == 0) {
+        $('#load_more').hide();        
+          }
+
+      });
+
+
+  db.data.where('project_id')
+      .equals(project_id)
+      .and(function (data) { return data.id < last_data_id})
+      .limit(10)
+      .reverse()
+      .each(function (data) {
 
   $('#data_list').append('' +
-'              <div class="file-item">'+
+'              <div class="file-item" data-id='+ data.id +'>'+
 '                <div class="row no-gutters wd-100p">'+
 '                  <div class="col-9 col-sm-5 d-flex align-items-center">'+
 data.alias +
@@ -114,6 +136,7 @@ data.alias +
 '                </div><!-- row -->'+
 '              </div><!-- file-item -->'+
           '');
+
       });
 
 }
@@ -216,9 +239,7 @@ function save_data(el) {
 
 
 function load_more(el) {
-  page_number = parseInt($('a.nav-link.active').attr('data-page'));
-  getDatabyPage(page_number);
-  console.log(page_number); 
+  getDatabyPage();
 }
 
 
