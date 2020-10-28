@@ -243,6 +243,40 @@ function load_more(el) {
 }
 
 
+function downloadBlob(blob, filename) {
+  var anchor = document.createElement('a');
+  anchor.setAttribute('download', filename);
+  var url = URL.createObjectURL(blob);
+  anchor.setAttribute('href', url);
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function createCSVFileFromString(string) {
+  var csv_mime_type = 'text/csv';
+  return new Blob([string], {type: csv_mime_type});
+}
+
+
+async function export_csv (el) {
+  project_id = parseInt($('a.nav-link.active').attr('data-id'));
+  	const alldata = await db.data
+      .where('project_id').equals(project_id)
+		.toArray();
+
+let csvContent = "data:text/csv;charset=utf-8,";
+
+csv_string = 'alias,value\n';
+/*var csvstring = toCSV(alldata);*/
+$(alldata).each(function( index, value) {
+    csv_string += value.alias + ',' + value.value + '\n';
+});
+  var blob = createCSVFileFromString(csv_string);
+  downloadBlob(blob, 'project.csv');
+
+
+}
+
 
 
 /*populateSomeData();*/
