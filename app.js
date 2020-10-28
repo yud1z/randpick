@@ -1,6 +1,6 @@
 var db = new Dexie("RandPick");
-db.version(1).stores({
-projects: "++id,name"
+db.version(5).stores({
+projects: "++id,name,count"
 });
 db.version(4).stores({
 data: "++id,project_id,alias,value,date"
@@ -31,7 +31,7 @@ function getProjects(){
           $('#project_list').append(''+
             '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'" class="nav-link active" onclick="nav_click(this)"> '+
             '   <span>'+ project.name +'</span> '+
-            '    <span>0</span> '+
+            '    <span>'+ project.count +'</span> '+
             '  </a> '+
           '');
         }
@@ -39,7 +39,7 @@ function getProjects(){
           $('#project_list').append(''+
             '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'"  class="nav-link" onclick="nav_click(this)"> '+
             '   <span>'+ project.name +'</span> '+
-            '    <span>0</span> '+
+            '    <span>'+ project.count +'</span> '+
             '  </a> '+
           '');
 
@@ -49,11 +49,30 @@ function getProjects(){
 
 }
 
+function refreshProjects(project_id){
+  $('#project_list').html('');
+
+  db.projects.orderBy('id').desc().each(function (project) {
+      active = '';
+    if (parseInt(project_id) == project.id) {
+        active = 'active';
+      }
+          $('#project_list').append(''+
+            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'"  class="nav-link '+ active +'" onclick="nav_click(this)"> '+
+            '   <span>'+ project.name +'</span> '+
+            '    <span>'+ project.count +'</span> '+
+            '  </a> '+
+          '');
+
+      });
+
+}
+
 
 function getData(){
+    //do something special
   $('#data_list').html('');
-  project_id = $('a.nav-link.active').attr('data-id');
-  console.log(project_id);
+  project_id = parseInt($('a.nav-link.active').attr('data-id'));
   db.data.where('project_id').equals(project_id).reverse().each(function (data) {
 
   $('#data_list').append('' +
@@ -73,11 +92,17 @@ data.alias +
 }
 
 getProjects();
-getData();
+
+setTimeout(
+  function() 
+  {
+  getData();
+  }, 1000);
 
 function nav_click(el){
     $('.nav-link').removeClass("active");
     $(el).addClass('active');
+    getData();
 }
 
 function new_project(el){
@@ -110,7 +135,7 @@ function save_project (el) {
     project_name = $('#project_name').val();  
     if (project_name.trim() != '') {
       return db.transaction("rw", db.projects, function () {
-          db.projects.add({ name: project_name});
+          db.projects.add({ name: project_name, count:0});
           getProjects();
           $('#project_name').val('');
           $('#new_project_modal').modal('hide');
@@ -129,13 +154,26 @@ function save_data(el) {
     data_name = $('#data_name').val();  
     data_alias = $('#data_alias').val();  
     if (data_name.trim() != '') {
-      return db.transaction("rw", db.data, function () {
+      return db.transaction("rw", db.data, db.projects, function () {
         var today = new Date();
         var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         project_id = parseInt($('a.nav-link.active').attr('data-id'));
           db.data.add({ alias: data_alias, value: data_name, date: date + ' ' + time, project_id: project_id});
+
+          db.data.where('project_id').equals(project_id).count(function (data) {
+              return db.transaction("rw", db.projects, function () {
+              db.projects.where('id').equals(project_id).modify({count: data})
+              }).catch(function (e) {
+                console.log(e, "error");
+                });
+              });
           getData();
+          setTimeout(
+  function() 
+  {
+          refreshProjects(project_id);
+  }, 1000);
           $('#data_alias').val('');
           $('#data_name').val('');
           $('#new_data_modal').modal('hide');
