@@ -27,23 +27,17 @@ function getProjects(){
   io = 0;
   $('#project_list').html('');
   db.projects.orderBy('id').desc().each(function (project) {
+      active = '';
       if (io == 0) {
+        active = 'active';
+      }
           $('#project_list').append(''+
-            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'" class="nav-link active" onclick="nav_click(this)"> '+
-            '   <span>'+ project.name +'</span> '+
-            '    <span>'+ project.count +'</span> '+
-            '  </a> '+
-          '');
-        }
-        else{
-          $('#project_list').append(''+
-            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'"  class="nav-link" onclick="nav_click(this)"> '+
+            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'" data-page=0 class="nav-link '+ active +'" onclick="nav_click(this)"> '+
             '   <span>'+ project.name +'</span> '+
             '    <span>'+ project.count +'</span> '+
             '  </a> '+
           '');
 
-          }
       io++;
       });
 
@@ -58,7 +52,7 @@ function refreshProjects(project_id){
         active = 'active';
       }
           $('#project_list').append(''+
-            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'"  class="nav-link '+ active +'" onclick="nav_click(this)"> '+
+            '  <a href="#project_'+ project.id +'" data-id="'+ project.id +'"  data-page=0 class="nav-link '+ active +'" onclick="nav_click(this)"> '+
             '   <span>'+ project.name +'</span> '+
             '    <span>'+ project.count +'</span> '+
             '  </a> '+
@@ -72,8 +66,41 @@ function refreshProjects(project_id){
 function getData(){
     //do something special
   $('#data_list').html('');
+  $('#load_more').hide();        
   project_id = parseInt($('a.nav-link.active').attr('data-id'));
-  db.data.where('project_id').equals(project_id).reverse().each(function (data) {
+  db.data.where('project_id').equals(project_id).count(function (data) {
+    if (data > 10) {
+        $('#load_more').show();        
+      }
+      });
+  db.data.where('project_id').equals(project_id).limit(10).reverse().each(function (data) {
+
+  $('#data_list').append('' +
+'              <div class="file-item">'+
+'                <div class="row no-gutters wd-100p">'+
+'                  <div class="col-9 col-sm-5 d-flex align-items-center">'+
+data.alias +
+'                  </div><!-- col-6 -->'+
+'                  <div class="col-3 col-sm-2 tx-right tx-sm-left">'+ data.value +'</div>'+
+'                  <div class="col-6 col-sm-4 mg-t-5 mg-sm-t-0" title="'+ data.date +'">'+ jQuery.timeago(data.date) +'</div>'+
+'                  <div class="col-6 col-sm-1 tx-right mg-t-5 mg-sm-t-0"><a href=""><i class="icon ion-more"></i></a></div>'+
+'                </div><!-- row -->'+
+'              </div><!-- file-item -->'+
+          '');
+      });
+
+}
+
+function getDatabyPage(page_id = 0){
+    //do something special
+  $('#load_more').hide();        
+  project_id = parseInt($('a.nav-link.active').attr('data-id'));
+  db.data.where('project_id').equals(project_id).count(function (data) {
+    if (data > 10) {
+        $('#load_more').show();        
+      }
+      });
+  db.data.where('project_id').equals(project_id).limit(10).reverse().each(function (data) {
 
   $('#data_list').append('' +
 '              <div class="file-item">'+
@@ -186,6 +213,14 @@ function save_data(el) {
         return false;
     }
 }
+
+
+function load_more(el) {
+  page_number = parseInt($('a.nav-link.active').attr('data-page'));
+  getDatabyPage(page_number);
+  console.log(page_number); 
+}
+
 
 
 

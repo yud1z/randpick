@@ -78,10 +78,11 @@
             <li class="breadcrumb-item"><a href="#">search</a></li>
             <li class="breadcrumb-item"><a href="javascript:void(0);" onclick="new_data(this)" >add data</a></li>
             <li class="breadcrumb-item"><a href="#">import from csv</a></li>
+            <li class="breadcrumb-item"><a href="#">export to csv</a></li>
             <li class="breadcrumb-item"><a href="#">delete project</a></li>
             <li class="breadcrumb-item"><a href="#">flush(Delete all) data</a></li>
             <li class="breadcrumb-item"><a href="#">delete result</a></li>
-            <li class="breadcrumb-item"><a href="#">config</a></li>
+            <li class="breadcrumb-item"><a href="#">settings</a></li>
             <li class="breadcrumb-item"><a href="#" style="font-weight:bold;">Show Screen</a></li>
           </ol>
             </div>
@@ -90,8 +91,8 @@
             </div><!-- file-group -->
 
 
-            <div class="load-more-wrapper mg-t-25" style="display:none">
-              <a href="">Load more</a>
+            <div class="load-more-wrapper mg-t-25" id="load_more" style="display:none">
+              <a href="javascript:void(0)" onclick="load_more(this)">Load more</a>
             </div><!-- load-more-wrapper -->
           </div><!-- manager-right -->
           <div class="manager-left">
