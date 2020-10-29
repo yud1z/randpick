@@ -24,7 +24,7 @@
             // Pull down the polyfill if needed (Safari + older opera browser)
             document.write('<script src="https://rawgit.com/axemclion/IndexedDBShim/master/dist/indexeddbshim.js">\x3C/script>');
     </script>
-    <script src="slim/lib/filer/js/jquery.filer.min.js"></script>
+    <script src="slim/lib/filer/js/jquery.filer.js"></script>
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <script src="https://timeago.yarp.com/jquery.timeago.js"></script>
     <script type="text/javascript" charset="utf-8" src="app.js"> </script>
@@ -203,10 +203,8 @@
           </div>
           <div class="modal-body pd-20">
             <p class="mg-b-5">
-            <form action="php/upload.html" method="post" enctype="multipart/form-data">
-            <input type="file" name="files[]" id="filer_input" multiple="multiple">
-            <input type="submit" value="Submit" class="btn btn-primary btn-block mg-b-10">
-            </form>
+            <input type="file" name="files" id="filer_input">
+            <a href="javascript:void(0)" type="submit" value="Submit" onclick="submit_csv(this)" class="btn btn-primary btn-block mg-b-10">Submit</a>
             </p>
           </div>
         </div>

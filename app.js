@@ -75,31 +75,7 @@ $(document).ready(function() {
                     remove: '.jFiler-item-trash-action'
                 }
             },
-            dragDrop: {},
-            uploadFile: {
-                url: "./php/upload.php",
-                data: {},
-                type: 'POST',
-                enctype: 'multipart/form-data',
-                beforeSend: function(){},
-                success: function(data, el){
-                    var parent = el.find(".jFiler-jProgressBar").parent();
-                    el.find(".jFiler-jProgressBar").fadeOut("slow", function(){
-                        $("<div class=\"jFiler-item-others text-success\"><i class=\"icon-jfi-check-circle\"></i> Success</div>").hide().appendTo(parent).fadeIn("slow");
-                    });
-
-                    console.log(data);
-                },
-                error: function(el){
-                    var parent = el.find(".jFiler-jProgressBar").parent();
-                    el.find(".jFiler-jProgressBar").fadeOut("slow", function(){
-                        $("<div class=\"jFiler-item-others text-error\"><i class=\"icon-jfi-minus-circle\"></i> Error</div>").hide().appendTo(parent).fadeIn("slow");
-                    });
-                },
-                statusCode: null,
-                onProgress: null,
-                onComplete: null
-            }
+            dragDrop: {}
         };
 
 
@@ -107,6 +83,8 @@ $(document).ready(function() {
          $('#filer_input').filer({
         changeInput: '<div class="jFiler-input-dragDrop"><div class="jFiler-input-inner"><div class="jFiler-input-icon"><i class="icon-jfi-folder"></i></div><div class="jFiler-input-text"><h3>Click on this box</h3> <span style="display:inline-block; margin: 15px 0">or</span></div><a class="jFiler-input-choose-btn btn-custom blue-light">Browse Files</a></div></div>',
         showThumbs: true,
+        limit:1,
+        extensions: ["csv"],
         theme: "dragdropbox",
         templates: filer_default_opts.templates
     });
@@ -471,8 +449,84 @@ async function export_csv (el) {
 }
 
 function import_from_csv_link (el) {
-  
         $('#upload_csv_modal').modal('show');
+}
+
+function submit_csv (el) {
+  var csv = $('#filer_input');
+  var csvFile = csv[0].files[0];
+  var ext = csv.val().split(".").pop().toLowerCase();
+
+  if($.inArray(ext, ["csv"]) === -1){
+    alert('please upload right csv');
+    return false;
+  }
+
+  if(csvFile != undefined){
+    reader = new FileReader();
+    reader.onload = function(e){
+
+      csvResult = e.target.result.split(/\r|\n|\r\n/);
+      true_format = true;
+
+      if (csvResult[0] != 'alias,value') {
+        true_format = false;
+        alert('wrong csv format, please change');
+      }
+
+      if (true_format == true) {
+        io = 0;
+    return db.transaction("rw", db.data, db.projects, function () {
+        $(csvResult).each(function( index, value) {
+
+            if (io != 0) {
+              spl_obj = value.split(',');
+              if (spl_obj.length == 2) {
+
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        project_id = parseInt($('a.nav-link.active').attr('data-id'));
+        db.data.add({ alias: spl_obj[0], value: spl_obj[1], date: date + ' ' + time, project_id: project_id});
+
+        db.data.where('project_id').equals(project_id).count(function (data) {
+            return db.transaction("rw", db.projects, function () {
+                db.projects.where('id').equals(project_id).modify({count: data})
+                }).catch(function (e) {
+                  console.log(e, "error");
+                  });
+            });
+ 
+
+
+
+                }
+            }
+
+io++;
+
+          });
+        $('#upload_csv_modal').modal('hide');
+        getData();
+        setTimeout(
+            function() 
+            {
+            refreshProjects(project_id);
+            }, 1000);
+
+    }).catch(function (e) {
+      console.log(e, "error");
+      });
+
+
+        }
+
+
+      /*$('.csv').append(csvResult);*/
+    }
+    reader.readAsText(csvFile);
+  }
+
 
 }
 
