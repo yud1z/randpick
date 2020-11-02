@@ -84,6 +84,7 @@ $(document).ready(function() {
         changeInput: '<div class="jFiler-input-dragDrop"><div class="jFiler-input-inner"><div class="jFiler-input-icon"><i class="icon-jfi-folder"></i></div><div class="jFiler-input-text"><h3>Click on this box</h3> <span style="display:inline-block; margin: 15px 0">or</span></div><a class="jFiler-input-choose-btn btn-custom blue-light">Browse Files</a></div></div>',
         showThumbs: true,
         limit:1,
+        removeConfirmation: false,
         extensions: ["csv"],
         theme: "dragdropbox",
         templates: filer_default_opts.templates
@@ -449,7 +450,7 @@ async function export_csv (el) {
 }
 
 function import_from_csv_link (el) {
-        $('#upload_csv_modal').modal('show');
+  $('#upload_csv_modal').modal('show');
 }
 
 function submit_csv (el) {
@@ -462,6 +463,10 @@ function submit_csv (el) {
     return false;
   }
 
+  $('#upload_csv_modal').modal('hide');
+  $('#loading_progress').modal('show');
+  $('#progress_loader').html('0%');
+  $('#progress_loader').css('width', '0%');
   if(csvFile != undefined){
     reader = new FileReader();
     reader.onload = function(e){
@@ -476,18 +481,39 @@ function submit_csv (el) {
 
       if (true_format == true) {
         io = 0;
+
+        csv_length = 0
+        $(csvResult).each(function( index, value) {
+
+            if (io != 0) {
+              spl_obj = value.split(',');
+              if (spl_obj.length == 2) {
+                csv_length++;
+
+              }
+            }
+            io++;
+        });
+
+        io = 0;
+
     return db.transaction("rw", db.data, db.projects, function () {
         $(csvResult).each(function( index, value) {
 
             if (io != 0) {
               spl_obj = value.split(',');
               if (spl_obj.length == 2) {
+        percentage = Math.ceil((io / csv_length) * 100);
+        console.log(percentage);
+        $('#progress_loader').html(percentage +'%');
+        $('#progress_loader').css('width', percentage + '%');
 
         var today = new Date();
         var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
         var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
         project_id = parseInt($('a.nav-link.active').attr('data-id'));
         db.data.add({ alias: spl_obj[0], value: spl_obj[1], date: date + ' ' + time, project_id: project_id});
+        
 
         db.data.where('project_id').equals(project_id).count(function (data) {
             return db.transaction("rw", db.projects, function () {
@@ -503,16 +529,23 @@ function submit_csv (el) {
                 }
             }
 
-io++;
+            io++;
 
           });
-        $('#upload_csv_modal').modal('hide');
+        $('.jFiler-item-trash-action').trigger('click');
+
+
         getData();
         setTimeout(
             function() 
             {
             refreshProjects(project_id);
             }, 1000);
+        /*setTimeout(*/
+        /*function() */
+        /*{*/
+        $('#loading_progress').modal('hide');
+        /*}, 1000);*/
 
     }).catch(function (e) {
       console.log(e, "error");

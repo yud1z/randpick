@@ -545,11 +545,12 @@
                                         c = function(a) {
                                             f._remove(m[0], m[1]);
                                         };
-                                    if (n.templates.removeConfirmation) {
-                                        n.dialogs.confirm(n.captions.removeConfirmation, c);
-                                    } else {
                                         c();
-                                    }
+                                        /*if (n.templates.removeConfirmation) {*/
+                                        /*n.dialogs.confirm(n.captions.removeConfirmation, c);*/
+                                        /*} else {*/
+                                        /*c();*/
+                                        /*}*/
                                 });
                             }
                             for (var i = 0; i < f.files.length; i++) {
