@@ -562,10 +562,3 @@ function submit_csv (el) {
 
 
 }
-
-
-
-/*populateSomeData();*/
-/*db.projects.orderBy('name').each(function (project) {*/
-/*console.log(JSON.stringify(project));*/
-/*});*/
